@@ -58,17 +58,18 @@ if [ -n "$DEV_HOME" ]; then
     mount "$DEV_HOME" /mnt/home
 fi
 
-pacstrap /mnt "$PACKAGES"
+pacstrap /mnt $PACKAGES
 genfstab -U /mnt >> /mnt/etc/fstab
-echo -e "${HOSTS}" >> /mnt/etc/hosts
-echo "${HOSTNAME}" > /mnt/etc/hostname
-echo KEYMAP=${KEYMAP} >> /mnt/etc/vconsole.conf
+echo -e "$HOSTS" >> /mnt/etc/hosts
+echo $HOSTNAME > /mnt/etc/hostname
+echo KEYMAP=$KEYMAP >> /mnt/etc/vconsole.conf
 echo -e "$LOCALE_GEN" >> /mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
-echo LANG=${LANG} >> /mnt/etc/locale.conf
+echo LANG=$LANG >> /mnt/etc/locale.conf
 echo "%wheel ALL=(ALL) ALL" > /mnt/etc/sudoers.d/wheel
-echo "${USER}":"${USER_PWD}" | chpasswd --root /mnt
-echo "root:${RTPWD}" | chpasswd --root /mnt
+arch-chroot /mnt useradd -aG wheel $USER
+echo "$USER":"$USER_PWD" | chpasswd --root /mnt
+echo "root:$ROOT_PWD" | chpasswd --root /mnt
 
 if [ -n "$DEV_MBR" ]; then
     arch-chroot /mnt grub-install $DEV_MBR

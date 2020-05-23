@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #PARTITION DISK BEFORE USING THIS SCRIPT
-# list devices: lsblk
-# partition disk: cfdisk -z <device>
+# list devices: 'lsblk' of 'fdisk -l'
+# partition disk: 'cfdisk -z /dev/sda'
 
 #--------------------------------------CONFIG--------------------------------------
 #device for MBR, comment for UEFI (also set DEV_BOOT for UEFI)
@@ -23,6 +23,9 @@ USER_PWD=user
 
 KEYMAP=br-abnt2
 
+#find your timezone in '/usr/share/zoneinfo/'
+TIMEZONE="America/Sao_Paulo"
+
 #use \n to add more locales
 LOCALE_GEN="en_US.UTF-8 UTF-8\npt_BR.UTF-8 UTF-8"
 
@@ -31,10 +34,28 @@ LANG=en_US.UTF-8
 HOSTNAME=arch
 HOSTS="127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\t${HOSTNAME}.localdomain ${HOSTNAME}"
 
-PACKAGES="base linux nano grub networkmanager sudo"
+PACKAGES="base base-devel git grub linux-lts linux-lts-headers linux-firmware nano networkmanager network-manager-applet os-prober sudo"
 
-#Services to enable (space-separated eg: "NetworkManager lightdm")
-SERVICES="NetworkManager"
+#comment to keep multilib disabled
+ENABLE_MULTILIB=true
+
+#EXTRA PACKAGES (installed with pacman on chroot)
+#comment or modify as needed
+EXTRA_PACKAGES="intel-ucode"
+EXTRA_PACKAGES+=" bash-completion cifs-utils git grub-customizer gvfs-nfs gvfs-smb ntfs-3g pacman-contrib"
+EXTRA_PACKAGES+=" blueman bluez-tools"
+EXTRA_PACKAGES+=" alsa-firmware alsa-plugins alsa-utils pavucontrol pavucontrol-qt pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack"
+EXTRA_PACKAGES+=" noto-fonts ttf-bitstream-vera ttf-dejavu ttf-roboto ttf-ubuntu-font-family"
+EXTRA_PACKAGES+=" arc-gtk-theme kvantum-qt5 kvantum-theme-adapta kvantum-theme-arc kvantum-theme-materia materia-gtk-theme papirus-icon-theme"
+EXTRA_PACKAGES+=" lib32-nvidia-utils nvidia-lts nvidia-settings"
+EXTRA_PACKAGES+=" lxqt sddm"
+EXTRA_PACKAGES+=" neofetch htop numlockx"
+EXTRA_PACKAGES+=" chromium firefox"
+EXTRA_PACKAGES+=" nemo nemo-fileroller ffmpegthumbnailer qbittorrent steam teamspeak3 vlc xed"
+EXTRA_PACKAGES+=" xfce4-settings xfce4-terminal xfwm4"
+
+#Services to enable (space-separated eg: "NetworkManager sddm")
+SERVICES="NetworkManager sddm"
 
 #----------------------------------END CONFIG----------------------------------
 
@@ -76,8 +97,6 @@ if [ -n "$DEV_HOME" ]; then
     mount "$DEV_HOME" /mnt/home
 fi
 
-sleep 2
-
 pacstrap /mnt $PACKAGES
 genfstab -U /mnt >> /mnt/etc/fstab
 
@@ -103,8 +122,18 @@ else
     arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
 fi
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-for item in ${SERVICES[*]}
-do
+
+if [ -n "$ENABLE_MULTILIB" ]; then
+    echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
+fi
+
+arch-chroot pacman -Syu --noconfirm 
+
+if [ -n "$EXTRA_PACKAGES" ]; then
+arch-chroot pacman -S --noconfirm $EXTRA_PACKAGES
+fi
+for item in ${SERVICES[*]}; do
     arch-chroot /mnt systemctl enable $item
 done
+
 

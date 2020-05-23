@@ -42,12 +42,12 @@ ENABLE_MULTILIB=true
 #EXTRA PACKAGES (installed with pacman on chroot)
 #comment or modify as needed
 EXTRA_PACKAGES="intel-ucode"
+#EXTRA_PACKAGES+=" lib32-nvidia-utils nvidia-lts nvidia-settings"
 EXTRA_PACKAGES+=" bash-completion cifs-utils git grub-customizer gvfs-nfs gvfs-smb ntfs-3g pacman-contrib"
 EXTRA_PACKAGES+=" blueman bluez-tools"
 EXTRA_PACKAGES+=" alsa-firmware alsa-plugins alsa-utils pavucontrol pavucontrol-qt pulseaudio pulseaudio-alsa pulseaudio-bluetooth pulseaudio-equalizer pulseaudio-jack"
 EXTRA_PACKAGES+=" noto-fonts ttf-bitstream-vera ttf-dejavu ttf-roboto ttf-ubuntu-font-family"
 EXTRA_PACKAGES+=" arc-gtk-theme kvantum-qt5 kvantum-theme-adapta kvantum-theme-arc kvantum-theme-materia materia-gtk-theme papirus-icon-theme"
-EXTRA_PACKAGES+=" lib32-nvidia-utils nvidia-lts nvidia-settings"
 EXTRA_PACKAGES+=" lxqt sddm"
 EXTRA_PACKAGES+=" neofetch htop numlockx"
 EXTRA_PACKAGES+=" chromium firefox"

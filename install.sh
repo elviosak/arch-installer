@@ -127,10 +127,10 @@ if [ -n "$ENABLE_MULTILIB" ]; then
     echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
 fi
 
-arch-chroot pacman -Syu --noconfirm 
+arch-chroot /mnt pacman -Syu --noconfirm 
 
 if [ -n "$EXTRA_PACKAGES" ]; then
-arch-chroot pacman -S --noconfirm $EXTRA_PACKAGES
+arch-chroot /mnt pacman -S --noconfirm $EXTRA_PACKAGES
 fi
 for item in ${SERVICES[*]}; do
     arch-chroot /mnt systemctl enable $item

@@ -47,7 +47,7 @@ if [ -n "$DEV_ROOT" ]; then
     echo mounting "$DEV_ROOT" to /mnt    
     mount "$DEV_ROOT" /mnt
 fi
-if [ -n "$DEV_BOOT" && -z "$DEV_MBR" ]; then
+if [ -z "$DEV_MBR" ]; then
     echo mounting "$DEV_BOOT" to /mnt/boot/efi
     mkdir -p /mnt/boot/efi
     mount "$DEV_BOOT" /mnt/boot/efi
